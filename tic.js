@@ -1,17 +1,25 @@
-function player(name, symbol) {
+function player(name, symbol, color) {
     let wins = 0;
 
     const updateScore = () => {
         wins++;
-    }
-    return { name, symbol, updateScore };
-}
+    };
+
+    const getWins = () => {
+        return wins;
+    };
+
+    return { name, symbol, color, updateScore, getWins };
+};
 
 const board = (function () {
     let boardState = ['', '', '', '', '', '', '', '', ''];
 
     const reset = function () {
         boardState = ['', '', '', '', '', '', '', '', ''];
+        cells.forEach(function(cell) {
+            cell.style.backgroundColor = "white";
+        });
     };
 
     const makeMove = function (index, symbol) {
@@ -29,8 +37,8 @@ const board = (function () {
     return { makeMove, reset, getBoardState };
 })();
 
-const player1 = player("Kevin", "X");
-const player2 = player("Shrimpy", "O");
+const player1 = player("Kevin", "X", "red");
+const player2 = player("Shrimpy", "O", "green");
 
 const game = () => {
     let currentPlayer = player1;
@@ -41,6 +49,11 @@ const game = () => {
         currentPlayer = currentPlayer === player1 ? player2 : player1;
         console.log(`current player: ${currentPlayer.name}`);
     };
+
+    const colorTile = (index) => {
+        cells[index].style.backgroundColor = currentPlayer.color;
+        console.log('colortile triggered');
+    }
 
     const checkLine = (index1, index2, index3) => {
         const boardState = board.getBoardState();
@@ -62,8 +75,8 @@ const game = () => {
         if (lines.includes(true)) {
             gameOver = true;
             currentPlayer.updateScore();
-            board.reset();
             console.log(`${currentPlayer.name} wins!`);
+            console.log(`${currentPlayer.name} wins: ${currentPlayer.getWins()}`);
         }
     };
 
@@ -71,6 +84,7 @@ const game = () => {
         if (!gameOver) {
             const symbol = currentPlayer.symbol;
             if (board.makeMove(index, symbol)) {
+                colorTile(index);
                 checkWin();
                 switchPlayer();
             } else {
@@ -81,8 +95,14 @@ const game = () => {
         }
     };
 
-    return { makeMove };
-}
+    const reset = () => {
+        board.reset();
+        currentPlayer = player1;
+        gameOver = false;
+    };
+
+    return { makeMove, reset };
+};
 
 const ticTacToe = game();
 
@@ -92,7 +112,14 @@ cells.forEach(function(cell) {
     cell.addEventListener('click', function(){
         ticTacToe.makeMove(cell.id);
     })
-})
+});
+
+const resetButton = document.querySelector('.reset');
+
+resetButton.addEventListener('click', function() {
+    board.reset();
+    ticTacToe.reset();
+});
 
 // ticTacToe.makeMove(0);
 // ticTacToe.makeMove(2);
