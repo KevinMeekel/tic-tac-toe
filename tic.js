@@ -37,7 +37,9 @@ const game = () => {
     let gameOver = false;
 
     const switchPlayer = () => {
+        console.log(`${currentPlayer.name} has made a move.`);
         currentPlayer = currentPlayer === player1 ? player2 : player1;
+        console.log(`current player: ${currentPlayer.name}`);
     };
 
     const checkLine = (index1, index2, index3) => {
@@ -83,9 +85,18 @@ const game = () => {
 }
 
 const ticTacToe = game();
-ticTacToe.makeMove(0);
-ticTacToe.makeMove(2);
-ticTacToe.makeMove(3);
-ticTacToe.makeMove(4);
-ticTacToe.makeMove(8);
-ticTacToe.makeMove(6);
+
+const cells = document.querySelectorAll('.cell');
+
+cells.forEach(function(cell) {
+    cell.addEventListener('click', function(){
+        ticTacToe.makeMove(cell.id);
+    })
+})
+
+// ticTacToe.makeMove(0);
+// ticTacToe.makeMove(2);
+// ticTacToe.makeMove(3);
+// ticTacToe.makeMove(4);
+// ticTacToe.makeMove(8);
+// ticTacToe.makeMove(6);
